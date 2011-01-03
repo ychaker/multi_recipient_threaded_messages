@@ -1,0 +1,11 @@
+sqlite3:
+  :adapter: sqlite3
+  :database: ':memory:'
+
+mysql:
+  :adapter: mysql2
+  :host: localhost
+  :username: root
+  :password: 
+  :database: multi_recipient_threaded_messages_plugin_test
+  :socket: /tmp/mysql.sock

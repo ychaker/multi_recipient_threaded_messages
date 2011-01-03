@@ -1,0 +1,11 @@
+Description:
+    Creates the message models and migrations for use with 
+    the multi_recipient_threaded_messages plugin.
+
+    Run the migration, passing the name of the model to be created.
+
+Example:
+  
+    rails generate multi_recipients_threaded_messages:models User Message ReceivedMessage
+
+Further steps are involved after this, see the README for full details.

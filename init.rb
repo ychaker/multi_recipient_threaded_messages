@@ -1,0 +1,1 @@
+require 'multi_recipient_threaded_messages'

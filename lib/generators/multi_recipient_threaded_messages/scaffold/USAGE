@@ -1,0 +1,10 @@
+Description:
+    Creates a basic but working controller and set of views for private messages.
+
+    Run the following generator, passing the name of the model you created.
+
+Example:
+  
+    rails generate multi_recipients_threaded_messages:scaffold User Message ReceivedMessage
+
+Further steps are involved after this, see the README for full details.

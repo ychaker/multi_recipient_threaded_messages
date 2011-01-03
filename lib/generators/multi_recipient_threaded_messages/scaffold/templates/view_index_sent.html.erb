@@ -1,0 +1,31 @@
+<h2>Sent</h2>
+<table>
+	<tr>
+		<th>Del?</th>
+		<th>Subject</th>
+		<th>To</th>
+		<th>Sent</th>
+	</tr>
+	<%% if @<%= message_plural_lower_case %>.size == 0 %>
+		<tr>
+			<td colspan="4">
+				No messages
+			</td>
+		</tr>
+	<%% else %>
+		<%% for <%= message_singular_lower_case %> in @<%= message_plural_lower_case %> %>
+			<tr>
+				<td><%%= check_box_tag "delete[]", <%= message_singular_lower_case %>.id %></td>
+				<td><%%= link_to h(<%= message_singular_lower_case %>.subject), user_<%= message_singular_lower_case %>_path(@<%= user_singular_lower_case %>, <%= message_singular_lower_case %>) %></td>
+  			<td><%%= link_to h(<%= message_singular_lower_case %>.recipient.login), user_path(@<%= user_singular_lower_case %>) %></td>
+			  <td><%%=h <%= message_singular_lower_case %>.created_at.to_s(:long) %></td>
+			</tr>
+		<%% end %>
+		<tr>
+			<td colspan="4">
+				<%%= submit_tag "Delete" %>
+			</td>
+		</tr>
+ 	<%% end %>
+</table>
+<%%= link_to "Inbox", user_<%= message_plural_lower_case %>_path(@<%= user_singular_lower_case %>)%>

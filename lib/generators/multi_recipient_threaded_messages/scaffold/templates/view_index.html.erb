@@ -1,0 +1,7 @@
+<%% form_tag delete_selected_user_<%= message_plural_lower_case %>_path(@<%= user_singular_lower_case %>, :method => :post) do %>
+	<%% if params[:mailbox] == "sent" %>
+			<%%= render :partial => "sent" %>
+	<%% else %>
+			<%%= render :partial => "inbox" %>
+		<%% end %>
+<%% end %>
