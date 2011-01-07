@@ -1,13 +1,29 @@
-<p><strong>From:</strong> <%%= @<%= message_singular_lower_case %>.sender == @user ? link_to("You", user_path(@user)) : link_to(h(@<%= message_singular_lower_case %>.sender.login), user_path(@user)) %></p>
-<p><strong>Received:</strong> <%%= @<%= message_singular_lower_case %>.created_at.to_s(:long) %></p>
-<p><strong>To:</strong> <%%= @<%= message_singular_lower_case %>.recipient == @user ? link_to("You", user_path(@user)) : link_to(h(@<%= message_singular_lower_case %>.recipient.login), user_path(@user)) %></p>
-<p>
-	<strong>Message</strong><br />
-	<%%= @<%= message_singular_lower_case %>.body %>
-</p>
-<p>
-	<%% if @<%= message_singular_lower_case %>.recipient == @user %>
-		<%%= link_to "Reply", new_user_<%= message_singular_lower_case %>_path(@user, :reply_to => @<%= message_singular_lower_case %>) %> |
-	<%% end %>
-	<%%= link_to "Inbox", user_<%= message_plural_lower_case %>_path(@user)%>
-</p>
+<div id='messages-nav'>
+	<%%= link_to "Inbox", user_<%= message_plural_lower_case %>_path(@current_user)%>
+</div>
+
+<div id='message-thread'>
+	<div id='subject'>
+		<h2><%%= @<%= message_thread_singular_lower_case %>.subject %></h2>
+	</div>
+	
+	<div id='participants'>
+		<%%= display_thread_participants @<%= message_thread_singular_lower_case %> %>
+	</div>
+	
+	<div id='messages'>
+		<%% for <%= message_singular_lower_case %> in @<%= message_thread_singular_lower_case %>.messages %>
+			<div id="message-<%%= <%= message_singular_lower_case %>.id %>" class='message'>
+				<div class='sender'><%%= link_to_user_profile <%= message_singular_lower_case %>.sender %></div>
+				<div class='body'><%%= <%= message_singular_lower_case %>.body %></div>
+				<div class='time_sent'><%%= <%= message_singular_lower_case %>.created_at.to_s(:long) %></div>
+			</div>
+		<%% end %>
+	</div>
+	
+	<div id='reply-box'>
+		<%% if @<%= message_thread_singular_lower_case %>.participants.include?(@current_user) %>
+			<!-- form_tag for reply ... -->
+		<%% end %>
+	</div>
+</div>

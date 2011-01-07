@@ -12,10 +12,12 @@ module MultiRecipientsThreadedMessages
       argument :user_model_name, :required => false, :default => "User", :desc => "The user model name"
       argument :message_model_name, :required => false, :default => "Message", :desc => "The message model name"
       argument :received_message_model_name, :required => false, :default => "ReceivedMessage", :desc => "The received message model name"
+      argument :message_thread_model_name, :required => false, :default => "MessageThread", :desc => "The message thread model name"
 
       attr_reader :user_singular_camel_case, :user_plural_camel_case, :user_singular_lower_case, :user_plural_lower_case
       attr_reader :message_singular_camel_case, :message_plural_camel_case, :message_singular_lower_case, :message_plural_lower_case
       attr_reader :received_message_singular_camel_case, :received_message_plural_camel_case, :received_message_singular_lower_case, :received_message_plural_lower_case
+      attr_reader :message_thread_singular_camel_case, :message_thread_plural_camel_case, :message_thread_singular_lower_case, :message_thread_plural_lower_case
 
       # Implement the required interface for Rails::Generators::Migration.
       # taken from http://github.com/rails/rails/blob/master/activerecord/lib/generators/active_record.rb
@@ -27,28 +29,45 @@ module MultiRecipientsThreadedMessages
         end
       end
       
+      def set_attributes
+        @message_plural_camel_case    = message_model_name.pluralize.camelize
+        @message_plural_lower_case    = message_model_name.pluralize.underscore
+        @message_singular_lower_case  = message_model_name.singularize.underscore
+        @message_singular_camel_case  = message_model_name.singularize.camelize
+
+        @received_message_plural_camel_case   = received_message_model_name.pluralize.camelize
+        @received_message_plural_lower_case   = received_message_model_name.pluralize.underscore
+        @received_message_singular_lower_case = received_message_model_name.singularize.underscore
+        @received_message_singular_camel_case = received_message_model_name.singularize.camelize
+        
+        @message_thread_plural_camel_case    = message_thread_model_name.pluralize.camelize
+        @message_thread_plural_lower_case    = message_thread_model_name.pluralize.underscore
+        @message_thread_singular_lower_case  = message_thread_model_name.singularize.underscore
+        @message_thread_singular_camel_case  = message_thread_model_name.singularize.camelize
+
+        @user_plural_camel_case   = user_model_name.pluralize.camelize
+        @user_plural_lower_case   = user_model_name.pluralize.underscore
+        @user_singular_lower_case = user_model_name.singularize.underscore
+        @user_singular_camel_case = user_model_name.singularize.camelize
+      end
+      
       def create_migration_files
-        @message_plural_camel_case = message_model_name.pluralize.camelize
-        @message_plural_lower_case = message_model_name.pluralize.underscore
-        @received_message_plural_camel_case = received_message_model_name.pluralize.camelize
-        @received_message_plural_lower_case = received_message_model_name.pluralize.underscore
         migration_template 'message_migration.rb', "db/migrate/create_#{message_plural_lower_case}", :assigns => {
           :migration_name => "Create#{message_plural_camel_case}"
         }
         migration_template 'received_message_migration.rb', "db/migrate/create_#{received_message_plural_lower_case}", :assigns => {
           :migration_name => "Create#{received_message_plural_camel_case}"
         }
+        migration_template 'message_thread_migration.rb', "db/migrate/create_#{message_thread_plural_lower_case}", :assigns => {
+          :migration_name => "Create#{message_thread_plural_camel_case}"
+        }
       end
       
       def create_model_file
-        @message_singular_lower_case = message_model_name.singularize.underscore
-        @received_message_singular_lower_case = received_message_model_name.singularize.underscore
-        @user_singular_camel_case = user_model_name.singularize.camelize
-        @message_singular_camel_case = message_model_name.singularize.camelize
-        @received_message_singular_camel_case = received_message_model_name.singularize.camelize
         #directory "app/models"
         template "message.rb", "app/models/#{message_singular_lower_case}.rb"
         template "received_message.rb", "app/models/#{received_message_singular_lower_case}.rb"
+        template "message_thread.rb", "app/models/#{message_thread_singular_lower_case}.rb"
       end
     end
   end

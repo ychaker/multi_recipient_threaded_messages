@@ -79,4 +79,44 @@ class MessageThreadModelTest < Test::Unit::TestCase
     assert_equal @reply.last_sender, @jerry
     assert_equal @reply.participants.count, 2
   end
+  
+  def test_with_participant_scope
+    threads = MessageThreadModel.with_participant @george
+    assert_equal threads.count, 1
+    assert_equal threads.first, @message_thread
+  end
+  
+  def test_unread_for_participant_scope
+    threads = MessageThreadModel.unread_for_participant @jerry
+    assert_equal threads.count, 1
+    assert_equal threads.first, @message_thread
+  end
+  
+  def test_read_for_participant_scope
+    threads = MessageThreadModel.read_for_participant @george
+    assert_equal threads.count, 1
+    assert_equal threads.first, @message_thread
+    threads = MessageThreadModel.read_for_participant @jerry
+    assert_equal threads.count, 0
+    MessageThreadModel.read(@message_thread, @jerry)
+    threads = MessageThreadModel.read_for_participant @jerry
+    assert_equal threads.count, 1
+    assert_equal threads.first, @message_thread
+  end
+  
+  def test_sent_by_scope
+    threads = MessageThreadModel.sent_by @george
+    assert_equal threads.count, 1
+    assert_equal threads.first, @message_thread
+    threads = MessageThreadModel.sent_by @jerry
+    assert_equal threads.count, 0
+  end
+  
+  def test_received_by_scope
+    threads = MessageThreadModel.received_by @jerry
+    assert_equal threads.count, 1
+    assert_equal threads.first, @message_thread
+    threads = MessageThreadModel.received_by @george
+    assert_equal threads.count, 0
+  end
 end

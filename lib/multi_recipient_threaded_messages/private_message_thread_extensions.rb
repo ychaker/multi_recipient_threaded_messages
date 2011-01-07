@@ -27,7 +27,8 @@ module MultiRecipientThreadedMessages # :nodoc:
           has_many :messages,
                    :class_name => options[:message_class],
                    :foreign_key => 'thread_id',
-                   :dependent => :destroy
+                   :dependent => :destroy,
+                   :order => "#{options[:message_class].constantize.table_name}.created_at ASC"
           
           has_many :received_messages, :through => :messages, :source => :received_messages, :uniq => true
           
@@ -35,6 +36,47 @@ module MultiRecipientThreadedMessages # :nodoc:
           include InstanceMethods 
           
           self.options = options
+          
+          scope :with_participant, lambda { |user|
+            joins(:messages)\
+            .joins("INNER JOIN #{options[:received_message_class].constantize.table_name} ON 
+             #{options[:received_message_class].constantize.table_name}.sent_message_id =
+             #{options[:message_class].constantize.table_name}.id")\
+            .where(["#{options[:message_class].constantize.table_name}.sender_id = ? OR 
+            #{options[:received_message_class].constantize.table_name}.recipient_id = ?", user.id, user.id])
+          }
+          
+          scope :sent_by, lambda { |user|
+            joins(:messages)\
+            .where(["#{options[:message_class].constantize.table_name}.sender_id = ?", user.id])
+          }
+          
+          scope :received_by, lambda { |user|
+            joins(:messages)\
+            .joins("INNER JOIN #{options[:received_message_class].constantize.table_name} ON 
+             #{options[:received_message_class].constantize.table_name}.sent_message_id =
+             #{options[:message_class].constantize.table_name}.id")\
+            .where(["#{options[:received_message_class].constantize.table_name}.recipient_id = ?", user.id])
+          }
+          
+          scope :unread_for_participant, lambda { |user|
+            joins(:messages)\
+            .joins("INNER JOIN #{options[:received_message_class].constantize.table_name} ON 
+             #{options[:received_message_class].constantize.table_name}.sent_message_id =
+             #{options[:message_class].constantize.table_name}.id")\
+            .where(["#{options[:received_message_class].constantize.table_name}.recipient_id = ?
+            AND #{options[:received_message_class].constantize.table_name}.read = ?", user.id, false])
+          }
+          
+          scope :read_for_participant, lambda { |user|
+            joins(:messages)\
+            .joins("INNER JOIN #{options[:received_message_class].constantize.table_name} ON 
+             #{options[:received_message_class].constantize.table_name}.sent_message_id =
+             #{options[:message_class].constantize.table_name}.id")\
+            .where(["#{options[:message_class].constantize.table_name}.sender_id = ? OR 
+            (#{options[:received_message_class].constantize.table_name}.recipient_id = ?
+            AND #{options[:received_message_class].constantize.table_name}.read = ?)", user.id, user.id, true])
+          }
         end
       end 
     end 
@@ -96,7 +138,7 @@ module MultiRecipientThreadedMessages # :nodoc:
       
       # Get all the recipients in the converstaion.
       def recipients
-        options[:user_class].constantize.recipients_in_thread(self).uniq
+        options[:user_class].constantize.recipients_in_message_thread(self).uniq
       end
       
       # All users involved in the conversation.

@@ -1,24 +1,24 @@
 <h2>Sent</h2>
 <table>
 	<tr>
-		<th>Del?</th>
+		<th>Delete?</th>
 		<th>Subject</th>
 		<th>To</th>
-		<th>Sent</th>
+		<th>Sent at</th>
 	</tr>
-	<%% if @<%= message_plural_lower_case %>.size == 0 %>
+	<%% if @<%= message_thread_plural_lower_case %>.size == 0 %>
 		<tr>
 			<td colspan="4">
 				No messages
 			</td>
 		</tr>
 	<%% else %>
-		<%% for <%= message_singular_lower_case %> in @<%= message_plural_lower_case %> %>
+		<%% for <%= message_thread_singular_lower_case %> in @<%= message_thread_plural_lower_case %> %>
 			<tr>
-				<td><%%= check_box_tag "delete[]", <%= message_singular_lower_case %>.id %></td>
-				<td><%%= link_to h(<%= message_singular_lower_case %>.subject), user_<%= message_singular_lower_case %>_path(@<%= user_singular_lower_case %>, <%= message_singular_lower_case %>) %></td>
-  			<td><%%= link_to h(<%= message_singular_lower_case %>.recipient.login), user_path(@<%= user_singular_lower_case %>) %></td>
-			  <td><%%=h <%= message_singular_lower_case %>.created_at.to_s(:long) %></td>
+				<td><%%= check_box_tag "delete[]", <%= message_thread_singular_lower_case %>.id %></td>
+				<td><%%= link_to h(<%= message_thread_singular_lower_case %>.subject), user_<%= message_singular_lower_case %>_path(@current_user, <%= message_thread_singular_lower_case %>) %></td>
+  			<td><%%= display_thread_recipients <%= message_thread_singular_lower_case %> %></td>
+			  <td><%%= <%= message_thread_singular_lower_case %>.last_message.created_at.to_s(:long) %></td>
 			</tr>
 		<%% end %>
 		<tr>
@@ -28,4 +28,4 @@
 		</tr>
  	<%% end %>
 </table>
-<%%= link_to "Inbox", user_<%= message_plural_lower_case %>_path(@<%= user_singular_lower_case %>)%>
+<%%= link_to "Inbox", user_<%= message_plural_lower_case %>_path(@current_user)%>

@@ -45,23 +45,23 @@ module MultiRecipientThreadedMessages #:nodoc:
         end 
         self.options = options
         
-        scope :recipients_in_thread, lambda { |thread|
+        scope :recipients_in_message_thread, lambda { |thread|
           joins(:received_messages)\
-          .joins("INNER JOIN `#{options[:message_class].constantize.table_name}` ON 
-           `#{options[:received_message_class].constantize.table_name}`.`sent_message_id` =
-           `#{options[:message_class].constantize.table_name}`.`id`")\
+          .joins("INNER JOIN #{options[:message_class].constantize.table_name} ON 
+           #{options[:received_message_class].constantize.table_name}.sent_message_id =
+           #{options[:message_class].constantize.table_name}.id")\
           .where(["#{options[:message_class].constantize.table_name}.thread_id = ?", thread.id])\
           .uniq
         }
-        scope :senders_in_thread, lambda { |thread|
+        scope :senders_in_message_thread, lambda { |thread|
           joins(:sent_messages)\
           .where(["#{options[:message_class].constantize.table_name}.thread_id = ?", thread.id])\
           .uniq
         }
-        scope :in_thread, lambda { |thread|
+        scope :in_message_thread, lambda { |thread|
           users = []
-          users << self.recipients_in_thread(thread)
-          users << self.senders_in_thread(thread)
+          users << self.recipients_in_message_thread(thread)
+          users << self.senders_in_message_thread(thread)
           users.flatten.uniq
         }
       end 
