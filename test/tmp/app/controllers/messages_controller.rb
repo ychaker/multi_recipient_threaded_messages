@@ -1,5 +1,6 @@
 class MessagesController < ApplicationController
-  
+  # This assumes you have some sort of authentication in place whith a require_user method in the ApplicationController
+  # and with a current_user method that initializes the @current_user object and return the logged in user
   before_filter :require_user
   
   def index
@@ -14,32 +15,19 @@ class MessagesController < ApplicationController
     @message_thread = MessageThread.read(params[:id], current_user)
   end
   
-  # def new
-  #   @message = Message.new
-  # 
-  #   if params[:reply_to]
-  #     @reply_to = @user.received_messages.find(params[:reply_to])
-  #     unless @reply_to.nil?
-  #       @message.to = @reply_to.sender.login
-  #       @message.subject = "Re: #{@reply_to.subject}"
-  #       @message.body = "\n\n*Original message*\n\n #{@reply_to.body}"
-  #     end
-  #   end
-  # end
-  
   def new
     @message_thread = MessageThread.new
   end
   
   def create
     if params[:reply]
-      @message = MessageThread.find(params[:reply][:thread_id])
-      @message.reply_to_thread(params[:reply].merge(:sender => current_user))
+      @message_thread = MessageThread.find(params[:reply][:thread_id])
+      @message_thread.reply_to_thread(params[:reply].merge(:sender => current_user))
     else
       recipients = User.where('id IN ?', params[:message][:recipients_ids])
-      @message.creat_new_thread(params[:message].merge(:sender => current_user, :recipients => recipients))
+      @message_thread= MessageThread.create_new_thread(params[:message].merge(:sender => current_user, :recipients => recipients))
     end
-    if @message.save
+    if @message_thread.save
       flash[:notice] = "Message sent"
       redirect_to user_messages_path(current_user)
     else
@@ -47,23 +35,14 @@ class MessagesController < ApplicationController
     end
   end
   
-  # def create
-  #   @message = Message.new(params[:message])
-  #   @message.sender = @user
-  #   @message.recipient = User.find_by_login(params[:message][:to])
-  # 
-  #   if @message.save
-  #     flash[:notice] = "Message sent"
-  #     redirect_to user_messages_path(@user)
-  #   else
-  #     render :action => :new
-  #   end
-  # end
-  
   def delete_selected
     if request.post?
       if params[:delete]
-        @message_threads =  MessageThread.with_participant(current_user).where("#{message_thread_singular_camel_case.table_name}.id IN ?", params[:delete])
+        if params[:delete].length == 1
+          @message_threads =  MessageThread.with_participant(current_user).where("message_threads.id = ?", params[:delete])
+        else
+          @message_threads =  MessageThread.with_participant(current_user).where("message_threads.id IN ?", params[:delete])
+        end
         @message_threads.each { |thread|
           thread.mark_deleted(current_user)
         }

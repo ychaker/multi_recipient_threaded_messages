@@ -11,6 +11,7 @@ class ScaffoldGeneratorTest < Rails::Generators::TestCase
   def test_generates_correct_file_name
     run_generator
     assert_file "app/controllers/messages_controller.rb"
+    assert_file "app/helpers/messages_helper.rb"
     assert_file "app/views/messages/index.html.erb"
     assert_file "app/views/messages/_inbox.html.erb"
     assert_file "app/views/messages/_sent.html.erb"

@@ -46,6 +46,11 @@ module MultiRecipientsThreadedMessages
         template "controller.rb", "app/controllers/#{@message_plural_lower_case}_controller.rb"
       end
       
+      def generate_helpers
+        #directory "app/helpers"
+        template "helper.rb", "app/helpers/#{@message_plural_lower_case}_helper.rb"
+      end
+      
       def generate_views
         #directory "app/views"
         #directory "app/views/#{@message_plural_lower_case}"

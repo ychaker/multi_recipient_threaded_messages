@@ -10,27 +10,34 @@ It's not bound to specific model names and plays nice with will_paginate.
 = Setup
 
 First create the private message model by running the 
-multi_recipients_threaded_messages:models generator, passing three parameters - 
-the name you want to use for the Message and 
-Received Message models and the name of the User model.
+multi_recipients_threaded_messages:models generator, passing four parameters - 
+the name you want to use for the Message, 
+Received Message models, the name of the User model,
+and the name for the Message Thread model.
 
-For all examples in the README, we will use Message, ReceivedMessage and User.
+PS: Passing the class names is optional. If you do not provide any class
+names, the defaults will be used (User Message ReceivedMessage MessageThread).
 
-  rails generate multi_recipients_threaded_messages:models User Message ReceivedMessage
+For all examples in the README, we will use Message, ReceivedMessage, MessageThread and User.
+
+  rails generate multi_recipients_threaded_messages:models User Message ReceivedMessage MessageThread
 
 Now add the following entry to the model which will have the messages
 
   has_private_messages
 
 If you have used anything other than "Message", you will have to pass the
-correct class name along as :class_name.
+correct class name along as :message_class.
 
 If you have used anything other than "ReceivedMessage", you will have to pass the
-correct class name along as :received_class_name.
+correct class name along as :received_message_class.
+
+If you have used anything other than "MessageThread", you will have to pass the
+correct class name along as :message_thread_class.
 
 example:
 
-  has_private_messages :class_name => "MyMessageClass", :received_class_name => "MyReceivedMessageClass"
+  has_private_messages :message_class => "MyMessageClass", :received_message_class => "MyReceivedMessageClass", :message_thread_class => "MyMessageThreadClass"
 
 That's it.
 
@@ -44,20 +51,16 @@ message model of Message and received message model of ReceivedMessage.
   jerry = User.find_by_login("jerry")
   george = User.find_by_login("george")
   
-  message = Message.new
-  message.subject = "Happy Festivus, son"
-  message.body = "It's time for the Feats of Strength."
-  message.sender = george
-  message.save
-  
-  received_message = ReceivedMessageModel.new
-  received_message.sent_message = message
-  received_message.recipient = jerry
-  received_message.save
+  message_thread = MessageThread.create_new_thread({
+    :subject       => "Happy Festivus, son",
+    :body          => "It's time for the Feats of Strength.",
+    :sender        => george,
+    :recipients    => [jerry]
+  })
 
-== Reading a message
+== Reading a thread
 
-  message = Message.read(id, user)
+  message_thread = MessageThread.read(id, user)
   
 If the user is the sender, it returns the message object that matches the id.
 If the user a recipient, it returns the message object where id either matches the ReceivedMessage id or Message id.
@@ -65,9 +68,16 @@ If unread, it checks to see if the passed user is the recipient and if so marks 
 
 You can also check if a message has been read with the following:
 
-  message.read?
+  message_thread.read? jerry
 
-== Retrieving a user's received mail
+== Replying to a thread
+
+  message_thread = message_thread.reply_to_thread({
+    :body          => "It's time for the Feats of Strength.",
+    :sender        => jerry
+  })
+
+== Retrieving a user's received messages
 
   newman = User.find_by_login("newman")
   newman.received_messages
@@ -80,7 +90,7 @@ Or the following for true or false on whether there are unread messages:
 
   newman.unread_messages?
   
-== Retrieving a user's sent mail
+== Retrieving a user's sent messages
 
   newman = User.find_by_login("newman")
   newman.sent_messages
@@ -92,23 +102,26 @@ Or the following for true or false on whether there are unread messages:
                           :limit => 20,
                           :order => "created_at ASC")
 
-== Deleting a message
+== Deleting a thread
 
   newman = User.find_by_login("newman")
-  message = Message.read(3, newman)
-  message.mark_deleted(newman)
+  message_thread = MessageThread.read(3, newman)
+  message_thread.mark_deleted(newman)
   
 This will look at a message and mark it read by the sender or recipient,
 based on whichever Newman is. It now will no longer appear in Newman's
 messages.
 
   kramer = User.find_by_login("kramer")
-  message = Message.read(3, kramer)
-  message.mark_deleted
+  message_thread = MessageThread.read(3, kramer)
+  message_thread.mark_deleted
 
 Now that both sender and recipient have marked the message deleted, it
 gets destroyed. Should a message be sent to oneself, it will be deleted
 in one step due to the sender and recipient being the same.
+
+There are other methods provided to retrieving and dealing with messages and threads. 
+The best place to find them is in the source code.
 
 = Scaffold
 
@@ -116,9 +129,11 @@ A generator is included to create a basic controller and set of views.
 
 Run the multi_recipients_threaded_messages:scaffold generator with the same options as before:
 
-  rails generate multi_recipients_threaded_messages:scaffold User Message ReceivedMessage
+  rails generate multi_recipients_threaded_messages:scaffold User Message ReceivedMessage MessageThread
 
-The controller will be named with the pluralised version of the model name.
+The controller will be named with the pluralised version of the model name. Then run the routes generator:
+
+  multi_recipients_threaded_messages:routes User Message ReceivedMessage MessageThread
 
 Then uncomment the entry at the top of both message models to establish the
 :to accessor.

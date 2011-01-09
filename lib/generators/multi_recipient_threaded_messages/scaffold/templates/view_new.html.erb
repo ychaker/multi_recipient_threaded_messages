@@ -1,21 +1,28 @@
-<%% form_for @<%= message_singular_lower_case %>, :url => user_<%= message_plural_lower_case %>_path(@user) do |f| %>
+<%%= form_tag <%= user_singular_lower_case %>_<%= message_plural_lower_case %>_path(@current_user) do %>
+<div id='recipients'>
+</div>
 <p>
 	To:<br />
-	<%%= f.text_field :to %>
-	<%%= error_message_on @<%= message_singular_lower_case %>, :to %>
+	<%%= text_field_tag :to %>
+	<%%= link_to 'Add Recipient', '#', :onclick => 'addRecipient();' %>
 </p>
 <p>
 	Subject:<br />
-	<%%= f.text_field :subject %>
-	<%%= error_message_on @<%= message_singular_lower_case %>, :subject %>
+	<%%= text_field_tag 'message[subject]' %>
 </p>
 <p>
-	Message<br />
-	<%%= f.text_area :body %>
-	<%%= error_message_on @<%= message_singular_lower_case %>, :body %>
+	Message:<br />
+	<%%= text_area_tag 'message[body]' %>
 </p>
 <p>
 	<%%= submit_tag "Send" %>
 </p>
 <%% end %>
-<!-- change to have multi recipients and a form_tag -->
+
+<script type="text/javascript">
+function addRecipient() {
+	var recipient_id = $('#to').val();
+	$('#to').val('');
+	$('#recipients').append("<input name='message[recipients_ids][]' type='hidden' value=" + recipient_id + ">");
+}
+</script>

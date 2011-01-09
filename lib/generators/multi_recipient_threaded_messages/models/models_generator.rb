@@ -55,9 +55,11 @@ module MultiRecipientsThreadedMessages
         migration_template 'message_migration.rb', "db/migrate/create_#{message_plural_lower_case}", :assigns => {
           :migration_name => "Create#{message_plural_camel_case}"
         }
+        sleep(1)
         migration_template 'received_message_migration.rb', "db/migrate/create_#{received_message_plural_lower_case}", :assigns => {
           :migration_name => "Create#{received_message_plural_camel_case}"
         }
+        sleep(1)
         migration_template 'message_thread_migration.rb', "db/migrate/create_#{message_thread_plural_lower_case}", :assigns => {
           :migration_name => "Create#{message_thread_plural_camel_case}"
         }

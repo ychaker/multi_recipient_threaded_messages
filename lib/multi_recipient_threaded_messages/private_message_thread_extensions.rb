@@ -180,7 +180,8 @@ module MultiRecipientThreadedMessages # :nodoc:
       
       # Returns true or false value based on whether all the messages have been read by the recipient.
       def read? reader
-        self.received_messages.find(:all, ["recipient_id = ? ", reader]).each { |each| return false if !each.read? }
+        self.received_messages.find(:all, :conditions => ["recipient_id = ? ", reader]).each { |each| return false unless each.read? }
+        return true
       end
       
       # Reply to current thread with the options passed in including the body and sender

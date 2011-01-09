@@ -6,6 +6,6 @@ Description:
 
 Example:
   
-    rails generate multi_recipients_threaded_messages:models User Message ReceivedMessage
+    rails generate multi_recipients_threaded_messages:models User Message ReceivedMessage MessageThread
 
 Further steps are involved after this, see the README for full details.

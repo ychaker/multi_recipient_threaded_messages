@@ -1,20 +1,28 @@
-<% form_for @message, :url => user_messages_path(@user) do |f| %>
+<%= form_tag user_messages_path(@current_user) do %>
+<div id='recipients'>
+</div>
 <p>
 	To:<br />
-	<%= f.text_field :to %>
-	<%= error_message_on @message, :to %>
+	<%= text_field_tag :to %>
+	<%= link_to 'Add Recipient', '#', :onclick => 'addRecipient();' %>
 </p>
 <p>
 	Subject:<br />
-	<%= f.text_field :subject %>
-	<%= error_message_on @message, :subject %>
+	<%= text_field_tag 'message[subject]' %>
 </p>
 <p>
-	Message<br />
-	<%= f.text_area :body %>
-	<%= error_message_on @message, :body %>
+	Message:<br />
+	<%= text_area_tag 'message[body]' %>
 </p>
 <p>
 	<%= submit_tag "Send" %>
 </p>
 <% end %>
+
+<script type="text/javascript">
+function addRecipient() {
+	var recipient_id = $('#to').val();
+	$('#to').val('');
+	$('#recipients').append("<input name='message[recipients_ids][]' type='hidden' value=" + recipient_id + ">");
+}
+</script>

@@ -1,30 +1,30 @@
 <h2>Inbox</h2>
 <table>
 	<tr>
-		<th>Del?</th>
-		<th>Sent</th>
+		<th>Delete?</th>
+		<th>Subject</th>
 		<th>Sender</th>
-		<th>Sent</th>
+		<th>Sent at</th>
 	</tr>
-	<% if @messages.size == 0 %>
+	<% if @message_threads.size == 0 %>
 		<tr>
 			<td colspan="4">
 				No messages
 			</td>
 		</tr>
 	<% else %>
-		<% for message in @messages %>
+		<% for message_thread in @message_threads %>
 			<tr>
-				<td><%= check_box_tag "delete[]", message.id %></td>
+				<td><%= check_box_tag "delete[]", message_thread.id %></td>
 				<td>
-					<% if message.read? %>
-					  <%= link_to h(message.subject), user_message_path(@user, message) %>
+					<% if message_thread.read?(@current_user) %>
+					  <%= link_to h(message_thread.subject), user_message_path(@current_user, message_thread) %>
 					<% else %>
-					  <%= link_to "#{h(message.subject)} (unread)", user_message_path(@user, message) %>
+					  <%= link_to "#{h(message_thread.subject)} (unread)", user_message_path(@current_user, message_thread) %>
 					<% end %>
 				</td>
-				<td><%= link_to h(message.sender.login), user_path(@user) %></td>
-		    <td><%=h message.created_at.to_s(:long) %></td>
+				<td><%= link_to_user_profile message_thread.last_sender %></td>
+		    <td><%= message_thread.last_message.created_at.to_s(:long) %></td>
 			</tr>
 		<% end %>
 		<tr>
@@ -34,5 +34,5 @@
 		</tr>
 	<% end %>
 </table>
-<%= link_to "Sent", user_messages_path(@user, :mailbox => :sent)%> |
-<%= link_to "Compose", new_user_message_path(@user)%>
+<%= link_to "Sent", user_messages_path(@current_user, :mailbox => :sent)%> |
+<%= link_to "Compose", new_user_message_path(@current_user)%>

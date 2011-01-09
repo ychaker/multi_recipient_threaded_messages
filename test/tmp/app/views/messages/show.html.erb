@@ -1,13 +1,38 @@
-<p><strong>From:</strong> <%= @message.sender == @user ? link_to("You", user_path(@user)) : link_to(h(@message.sender.login), user_path(@user)) %></p>
-<p><strong>Received:</strong> <%= @message.created_at.to_s(:long) %></p>
-<p><strong>To:</strong> <%= @message.recipient == @user ? link_to("You", user_path(@user)) : link_to(h(@message.recipient.login), user_path(@user)) %></p>
-<p>
-	<strong>Message</strong><br />
-	<%= @message.body %>
-</p>
-<p>
-	<% if @message.recipient == @user %>
-		<%= link_to "Reply", new_user_message_path(@user, :reply_to => @message) %> |
-	<% end %>
-	<%= link_to "Inbox", user_messages_path(@user)%>
-</p>
+<div id='messages-nav'>
+	<%= link_to "Inbox", user_messages_path(@current_user)%>
+</div>
+
+<div id='message-thread'>
+	<div id='subject'>
+		<h2><%= @message_thread.subject %></h2>
+	</div>
+	
+	<div id='participants'>
+		<%= display_thread_participants @message_thread %>
+	</div>
+	
+	<div id='messages'>
+		<% for message in @message_thread.messages %>
+			<div id="message-<%= message.id %>" class='message'>
+				<div class='sender'><%= link_to_user_profile message.sender %></div>
+				<div class='body'><%= message.body %></div>
+				<div class='time_sent'><%= message.created_at.to_s(:long) %></div>
+			</div>
+		<% end %>
+	</div>
+	
+	<div id='reply-box'>
+		<% if @message_thread.participants.include?(@current_user) %>
+			<%= form_tag user_messages_path(@current_user) do %>
+			<%= hidden_field_tag 'reply[thread_id]', @message_thread.id %>
+			<p>
+				Reply:<br />
+				<%= text_area_tag 'reply[body]' %>
+			</p>
+			<p>
+				<%= submit_tag "Reply" %>
+			</p>
+			<% end %>
+		<% end %>
+	</div>
+</div>

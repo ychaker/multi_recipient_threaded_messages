@@ -44,7 +44,7 @@ module MultiRecipientsThreadedMessages
       def generate_routes
         route("
         resources :#{@user_plural_lower_case} do
-          resources :#{@message_plural_camel_case} do
+          resources :#{@message_plural_lower_case} do
             collection do
               post :delete_selected
             end
