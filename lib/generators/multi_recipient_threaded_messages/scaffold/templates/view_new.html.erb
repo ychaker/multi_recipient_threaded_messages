@@ -1,18 +1,23 @@
+<div id='messages-nav'>
+	<%%= link_to "Inbox", <%= user_singular_lower_case %>_<%= message_plural_lower_case %>_path(@current_user) %> |
+	<%%= link_to "Compose", new_<%= user_singular_lower_case %>_<%= message_singular_lower_case %>_path(@current_user) %>
+</div>
+
 <%%= form_tag <%= user_singular_lower_case %>_<%= message_plural_lower_case %>_path(@current_user) do %>
 <div id='recipients'>
 </div>
 <p>
 	To:<br />
-	<%%= text_field_tag :to %>
+	<%%= message_input_field 'to', 'text_field', @user_input, @errors %>
 	<%%= link_to 'Add Recipient', '#', :onclick => 'addRecipient();' %>
 </p>
 <p>
 	Subject:<br />
-	<%%= text_field_tag 'message[subject]' %>
+	<%%= message_input_field 'subject', 'text_field', @user_input, @errors %>
 </p>
 <p>
 	Message:<br />
-	<%%= text_area_tag 'message[body]' %>
+	<%%= message_input_field 'body', 'text_area', @user_input, @errors %>
 </p>
 <p>
 	<%%= submit_tag "Send" %>
@@ -21,8 +26,8 @@
 
 <script type="text/javascript">
 function addRecipient() {
-	var recipient_id = $('#to').val();
-	$('#to').val('');
+	var recipient_id = $('#message_to').val();
+	$('#message_to').val('');
 	$('#recipients').append("<input name='message[recipients_ids][]' type='hidden' value=" + recipient_id + ">");
 }
 </script>

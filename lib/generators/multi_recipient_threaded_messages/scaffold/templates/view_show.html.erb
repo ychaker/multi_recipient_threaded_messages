@@ -1,5 +1,6 @@
 <div id='messages-nav'>
-	<%%= link_to "Inbox", <%= user_singular_lower_case %>_<%= message_plural_lower_case %>_path(@current_user)%>
+	<%%= link_to "Inbox", <%= user_singular_lower_case %>_<%= message_plural_lower_case %>_path(@current_user) %> |
+	<%%= link_to "Compose", new_<%= user_singular_lower_case %>_<%= message_singular_lower_case %>_path(@current_user) %>
 </div>
 
 <div id='message-thread'>
@@ -27,7 +28,7 @@
 			<%%= hidden_field_tag 'reply[thread_id]', @<%= message_thread_singular_lower_case %>.id %>
 			<p>
 				Reply:<br />
-				<%%= text_area_tag 'reply[body]' %>
+				<%%= message_input_field 'body', 'text_area', @user_input, @errors %>
 			</p>
 			<p>
 				<%%= submit_tag "Reply" %>

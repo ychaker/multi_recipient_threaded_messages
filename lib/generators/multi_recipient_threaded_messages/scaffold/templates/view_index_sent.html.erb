@@ -28,4 +28,5 @@
 		</tr>
  	<%% end %>
 </table>
-<%%= link_to "Inbox", <%= user_singular_lower_case %>_<%= message_plural_lower_case %>_path(@current_user)%>
+<%%= link_to "Inbox", <%= user_singular_lower_case %>_<%= message_plural_lower_case %>_path(@current_user)%> |
+<%%= link_to "Compose", new_user_<%= message_singular_lower_case %>_path(@current_user)%>
