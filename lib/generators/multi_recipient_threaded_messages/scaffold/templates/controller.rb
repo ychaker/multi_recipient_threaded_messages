@@ -5,9 +5,9 @@ class <%= message_plural_camel_case %>Controller < ApplicationController
   
   def index
     if params[:mailbox] == "sent"
-      @<%= message_thread_plural_lower_case %> = <%= message_thread_singular_camel_case %>.sent_by(current_user).uniq
+      @<%= message_thread_plural_lower_case %> = <%= message_thread_singular_camel_case %>.sent_by(current_user).where(['<%= message_plural_lowers_case %>.sender_deleted = ?', false]).uniq
     else
-      @<%= message_thread_plural_lower_case %> = <%= message_thread_singular_camel_case %>.received_by(current_user).uniq
+      @<%= message_thread_plural_lower_case %> = <%= message_thread_singular_camel_case %>.received_by(current_user).where(['<%= received_message_plural_lowers_case %>.recipient_deleted = ?', false]).uniq
     end
   end
   
