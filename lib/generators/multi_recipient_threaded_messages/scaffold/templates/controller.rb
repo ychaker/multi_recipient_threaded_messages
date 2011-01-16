@@ -78,7 +78,7 @@ private
       if ids.length == 1
         recipients = <%= user_singular_camel_case %>.find(ids)
       elsif ids.length > 1
-        recipients = <%= user_singular_camel_case %>.where('id IN ?', ids).all
+        recipients = <%= user_singular_camel_case %>.where('id IN (?)', ids).all
       end
     end
     return recipients
