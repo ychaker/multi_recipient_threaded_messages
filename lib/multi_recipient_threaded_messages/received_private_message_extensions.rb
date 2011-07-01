@@ -24,7 +24,8 @@ module MultiRecipientThreadedMessages # :nodoc:
         unless included_modules.include? InstanceMethods
           belongs_to :sent_message,
                      :class_name => options[:message_class],
-                     :foreign_key => 'sent_message_id'
+                     :foreign_key => 'sent_message_id',
+                     :touch => true
                      
           belongs_to :recipient,
                      :class_name => options[:user_class],
