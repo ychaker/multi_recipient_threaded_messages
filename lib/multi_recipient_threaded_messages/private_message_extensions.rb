@@ -26,7 +26,8 @@ module MultiRecipientThreadedMessages # :nodoc:
           
           belongs_to :thread,
                      :class_name => options[:message_thread_class],
-                     :foreign_key => 'thread_id'
+                     :foreign_key => 'thread_id',
+                     :touch => true
                      
           belongs_to :sender,
                      :class_name => options[:user_class],
