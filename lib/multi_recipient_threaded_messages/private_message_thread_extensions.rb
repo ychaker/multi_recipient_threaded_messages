@@ -120,19 +120,19 @@ module MultiRecipientThreadedMessages # :nodoc:
 
       # First message of the conversation.
       def original_message
-        @original_message ||= self.messages.order('created_at ASC').first
+        @original_message ||= self.messages.first
         @original_message
       end
 
       # Sender of the last message.
       def last_sender
-        @last_sender ||= self.last_message.sender
+        @last_sender = self.last_message.sender
         @last_sender
       end
 
       # Last message in the conversation.
       def last_message
-        @last_message ||= self.messages.order('created_at DESC, id DESC').first
+        @last_message = self.messages.last
         @last_message
       end
       
