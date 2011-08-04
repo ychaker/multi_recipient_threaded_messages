@@ -46,7 +46,9 @@ module MultiRecipientThreadedMessages #:nodoc:
         self.options = options
         
         scope :recipients_in_message_thread, lambda { |thread|
-          joins(:received_messages)\
+          joins("INNER JOIN #{options[:received_message_class].constantize.table_name} ON 
+           #{options[:received_message_class].constantize.table_name}.recipient_id =
+           #{self.table_name}.id")\
           .joins("INNER JOIN #{options[:message_class].constantize.table_name} ON 
            #{options[:received_message_class].constantize.table_name}.sent_message_id =
            #{options[:message_class].constantize.table_name}.id")\
