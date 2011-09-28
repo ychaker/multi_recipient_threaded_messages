@@ -61,7 +61,9 @@ module MultiRecipientThreadedMessages # :nodoc:
       # Once both have marked it deleted, it is destroyed.
       def mark_deleted(user)
         self.sender_deleted = true if self.sender == user
-        self.received_messages.find(:first, ["recipient_id = ? ", user]).mark_deleted(user) if self.recipients.include?(user)
+        self.received_messages.where(["recipient_id = ? ", user.id]).all.each { |message|
+          message.mark_deleted(user) if self.recipients.include?(user)
+        }
         self.save
         self.thread.attempt_to_delete
       end
